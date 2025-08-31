@@ -1,8 +1,8 @@
-const CACHE_NAME = "thuthuat-cache-v1";
+const CACHE_NAME = "thuthuat-cache-v1"; 
 const URLS_TO_CACHE = [
-  "https://chauhuynh0104.github.io/bacsichau/",                 // trang chính
-  "https://chauhuynh0104.github.io/bacsichau/index.html",         // file html
-  "https://chauhuynh0104.github.io/gym/giaodien.css",     // css của bạn
+  "https://chauhuynh0104.github.io/bacsichau/",        // trang chính
+  "https://chauhuynh0104.github.io/bacsichau/index.html", // file html
+  "https://chauhuynh0104.github.io/gym/giaodien.css",  // css của bạn
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
   // thêm các file js/json/txt bạn cần hoạt động offline
@@ -20,8 +20,9 @@ self.addEventListener("fetch", event => {
       // khi offline thì lấy từ cache
       return caches.match(event.request).then(resp => {
         if (resp) return resp;
+
         // fallback: báo lỗi
-      return new Response(`
+        return new Response(`
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -86,8 +87,8 @@ self.addEventListener("fetch", event => {
 </body>
 </html>
 `, { headers: { "Content-Type": "text/html" } });
-        );
       });
     })
   );
 });
+
