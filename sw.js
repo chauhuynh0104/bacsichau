@@ -1,27 +1,19 @@
-const CACHE_NAME = "thuthuat-cache-v1"; 
-const URLS_TO_CACHE = [
-  "https://chauhuynh0104.github.io/bacsichau/",        // trang chính
-  "https://chauhuynh0104.github.io/bacsichau/index.html", // file html
-  "https://chauhuynh0104.github.io/gym/giaodien.css",  // css của bạn
-  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
-  "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
-  // thêm các file js/json/txt bạn cần hoạt động offline
-];
+const CACHE_NAME = "offline-notice-v1";
 
 self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(URLS_TO_CACHE))
-  );
+  // cài đặt nhanh
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(clients.claim());
 });
 
 self.addEventListener("fetch", event => {
   event.respondWith(
     fetch(event.request).catch(() => {
-      // khi offline thì lấy từ cache
-      return caches.match(event.request).then(resp => {
-        if (resp) return resp;
-
-        // fallback: báo lỗi
+      // nếu request là trang HTML chính thì trả về thông báo
+      if (event.request.mode === "navigate") {
         return new Response(`
 <!DOCTYPE html>
 <html lang="vi">
@@ -35,12 +27,10 @@ self.addEventListener("fetch", event => {
     background: linear-gradient(135deg,#74ebd5,#9face6);
     color: #2c3e50;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
-    text-align: center;
   }
   .card {
     background: white;
@@ -48,17 +38,11 @@ self.addEventListener("fetch", event => {
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     max-width: 400px;
+    text-align: center;
     animation: fadeIn 0.8s ease-in-out;
   }
-  h1 {
-    font-size: 24px;
-    margin-bottom: 12px;
-    color: #e74c3c;
-  }
-  p {
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
+  h1 { font-size: 24px; color: #e74c3c; margin-bottom: 12px; }
+  p { font-size: 16px; margin-bottom: 20px; }
   button {
     background: #3498db;
     color: white;
@@ -67,11 +51,8 @@ self.addEventListener("fetch", event => {
     border-radius: 8px;
     font-size: 15px;
     cursor: pointer;
-    transition: background 0.3s;
   }
-  button:hover {
-    background: #2980b9;
-  }
+  button:hover { background: #2980b9; }
   @keyframes fadeIn {
     from {opacity:0; transform: translateY(20px);}
     to {opacity:1; transform: translateY(0);}
@@ -81,14 +62,17 @@ self.addEventListener("fetch", event => {
 <body>
   <div class="card">
     <h1>⚠️ Mất kết nối Internet</h1>
-    <p>Bạn đang offline.<br/>Vui lòng kiểm tra lại kết nối mạng của bạn.</p>
+    <p>Bạn đang offline.<br/>Vui lòng kiểm tra lại kết nối mạng.</p>
     <button onclick="location.reload()">🔄 Thử lại</button>
   </div>
 </body>
 </html>
-`, { headers: { "Content-Type": "text/html" } });
-      });
+        `, { headers: { "Content-Type": "text/html" } });
+      }
+      // các request khác thì trả về rỗng
+      return new Response("", { status: 503, statusText: "Offline" });
     })
   );
 });
+
 
