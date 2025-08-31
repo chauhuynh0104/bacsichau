@@ -1,8 +1,5 @@
-const CACHE_NAME = "offline-notice-v1";
-
 self.addEventListener("install", event => {
-  // cài đặt nhanh
-  self.skipWaiting();
+  self.skipWaiting(); // cài ngay
 });
 
 self.addEventListener("activate", event => {
@@ -12,7 +9,7 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   event.respondWith(
     fetch(event.request).catch(() => {
-      // nếu request là trang HTML chính thì trả về thông báo
+      // Nếu đang mở trang HTML (điều hướng) mà offline -> hiện thông báo
       if (event.request.mode === "navigate") {
         return new Response(`
 <!DOCTYPE html>
@@ -25,7 +22,6 @@ self.addEventListener("fetch", event => {
   body {
     font-family: 'Inter', sans-serif;
     background: linear-gradient(135deg,#74ebd5,#9face6);
-    color: #2c3e50;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,11 +29,10 @@ self.addEventListener("fetch", event => {
     margin: 0;
   }
   .card {
-    background: white;
+    background: #fff;
     padding: 30px;
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    max-width: 400px;
     text-align: center;
     animation: fadeIn 0.8s ease-in-out;
   }
@@ -63,16 +58,14 @@ self.addEventListener("fetch", event => {
   <div class="card">
     <h1>⚠️ Mất kết nối Internet</h1>
     <p>Bạn đang offline.<br/>Vui lòng kiểm tra lại kết nối mạng.</p>
-    <button onclick="location.reload()">🔄 Thử lại</button>
+    <button onclick="location.reload()">Thử lại</button>
   </div>
 </body>
 </html>
         `, { headers: { "Content-Type": "text/html" } });
       }
-      // các request khác thì trả về rỗng
+      // Với các request khác (css/js/img) -> trả rỗng
       return new Response("", { status: 503, statusText: "Offline" });
     })
   );
 });
-
-
