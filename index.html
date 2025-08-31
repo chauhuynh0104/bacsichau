@@ -21,6 +21,14 @@
   document.write(decoded);
 </script>
 
-
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('https://chauhuynh0104.github.io/bacsichau/sw.js')
+      .then(reg => console.log('Đã có mạng trở lại', reg))
+      .catch(err => console.log('Không thể kết nối mạng:', err));
+  });
+}
+</script>
 </body>
 </html>
