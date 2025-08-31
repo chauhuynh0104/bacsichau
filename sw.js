@@ -1,8 +1,8 @@
 const CACHE_NAME = "thuthuat-cache-v1";
 const URLS_TO_CACHE = [
-  "/",                 // trang chính
-  "/okk.html",         // file html
-  "/giaodien.css",     // css của bạn
+  "https://chauhuynh0104.github.io/bacsichau/",                 // trang chính
+  "https://chauhuynh0104.github.io/bacsichau/index.html",         // file html
+  "https://chauhuynh0104.github.io/gym/giaodien.css",     // css của bạn
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
   // thêm các file js/json/txt bạn cần hoạt động offline
