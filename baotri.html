@@ -388,98 +388,6 @@
             transform: translateY(-5px);
         }
         
-        .game-container {
-            text-align: center;
-        }
-        
-        .game-title {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: var(--accent-color);
-        }
-        
-        .game-board {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .game-cell {
-            aspect-ratio: 1;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .game-cell:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .game-cell.x {
-            color: var(--primary-color);
-        }
-        
-        .game-cell.o {
-            color: var(--accent-color);
-        }
-        
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        
-        .game-score {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .score-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .score-value {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .game-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-        
-        .btn:hover {
-            background: var(--primary-color);
-            color: var(--dark-bg);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            font-weight: bold;
-        }
-        
         .notification {
             position: fixed;
             top: 20px;
@@ -540,6 +448,98 @@
             opacity: 0.9;
         }
         
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 8px;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .feature-content h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+        
+        .feature-content p {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .faq-list {
+            margin-top: 20px;
+        }
+        
+        .faq-item {
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+        }
+        
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .faq-answer {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .faq-answer.active {
+            max-height: 200px;
+        }
+        
+        .faq-toggle {
+            color: var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -595,6 +595,10 @@
             
             .countdown-item {
                 min-width: 70px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -659,7 +663,7 @@
             
             <div class="message">
                 Hệ thống đang được nâng cấp và bảo trì để mang đến trải nghiệm tốt hơn cho quý khách.
-                Trong thời gian chờ đợi, hãy khám phá các tính năng thú vị bên dưới.
+                Trong thời gian chờ đợi, hãy khám phá các tính năng mới sẽ có sau bảo trì.
             </div>
             
             <div class="progress-container">
@@ -729,40 +733,84 @@
                         <span class="update-time">08:15</span>
                         <span class="update-content">Bắt đầu bảo trì hệ thống</span>
                     </li>
+                    <li class="update-item">
+                        <span class="update-time">07:30</span>
+                        <span class="update-content">Chuẩn bị tài nguyên bảo trì</span>
+                    </li>
                 </ul>
             </div>
             
             <div class="side-card">
-                <h2 class="card-title"><i class="fas fa-gamepad"></i> Trò Chơi Trong Khi Chờ</h2>
-                <div class="game-container">
-                    <div class="game-title">Caro (3x3)</div>
-                    <div class="game-info">
-                        <div class="game-score">
-                            <div class="score-item">
-                                <span>X:</span>
-                                <span class="score-value" id="score-x">0</span>
-                            </div>
-                            <div class="score-item">
-                                <span>O:</span>
-                                <span class="score-value" id="score-o">0</span>
-                            </div>
+                <h2 class="card-title"><i class="fas fa-star"></i> Tính Năng Mới Sắp Ra Mắt</h2>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
                         </div>
-                        <div class="game-status" id="game-status">Lượt của X</div>
+                        <div class="feature-content">
+                            <h3>Tốc Độ Cao</h3>
+                            <p>Tải trang nhanh hơn 40%</p>
+                        </div>
                     </div>
-                    <div class="game-board" id="game-board">
-                        <div class="game-cell" data-cell-index="0"></div>
-                        <div class="game-cell" data-cell-index="1"></div>
-                        <div class="game-cell" data-cell-index="2"></div>
-                        <div class="game-cell" data-cell-index="3"></div>
-                        <div class="game-cell" data-cell-index="4"></div>
-                        <div class="game-cell" data-cell-index="5"></div>
-                        <div class="game-cell" data-cell-index="6"></div>
-                        <div class="game-cell" data-cell-index="7"></div>
-                        <div class="game-cell" data-cell-index="8"></div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Responsive</h3>
+                            <p>Trải nghiệm tốt trên mọi thiết bị</p>
+                        </div>
                     </div>
-                    <div class="game-controls">
-                        <button class="btn" id="reset-game">Chơi lại</button>
-                        <button class="btn btn-primary" id="hint-btn">Gợi ý</button>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Bảo Mật</h3>
+                            <p>Bảo vệ dữ liệu tốt hơn</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Thống Kê</h3>
+                            <p>Báo cáo chi tiết và trực quan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="side-card">
+                <h2 class="card-title"><i class="fas fa-question-circle"></i> Câu Hỏi Thường Gặp</h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Tại sao hệ thống cần bảo trì?
+                            <span class="faq-toggle">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            Hệ thống cần bảo trì để nâng cấp phần mềm, cải thiện hiệu suất và bảo mật, mang đến trải nghiệm tốt hơn cho người dùng.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Khi nào hệ thống hoạt động lại?
+                            <span class="faq-toggle">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            Dự kiến hệ thống sẽ hoạt động trở lại sau 2 giờ 45 phút nữa. Thời gian có thể thay đổi tùy thuộc vào tiến độ bảo trì.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Tôi có thể làm gì trong thời gian chờ?
+                            <span class="faq-toggle">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            Bạn có thể theo dõi tiến độ bảo trì, đăng ký nhận thông báo khi hệ thống hoạt động lại, hoặc liên hệ với chúng tôi nếu có vấn đề khẩn cấp.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -829,111 +877,28 @@
             setInterval(update, 1000);
         }
         
-        // Game logic
-        let currentPlayer = 'X';
-        let gameState = ['', '', '', '', '', '', '', '', ''];
-        let gameActive = true;
-        let scoreX = 0;
-        let scoreO = 0;
-        
-        const winningConditions = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-            [0, 4, 8], [2, 4, 6] // diagonals
-        ];
-        
-        const gameStatus = document.getElementById('game-status');
-        const scoreXElement = document.getElementById('score-x');
-        const scoreOElement = document.getElementById('score-o');
-        
-        function handleCellClick(clickedCellEvent) {
-            const clickedCell = clickedCellEvent.target;
-            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
+        // FAQ toggle functionality
+        function setupFAQ() {
+            const faqItems = document.querySelectorAll('.faq-item');
             
-            if (gameState[clickedCellIndex] !== '' || !gameActive) {
-                return;
-            }
-            
-            gameState[clickedCellIndex] = currentPlayer;
-            clickedCell.textContent = currentPlayer;
-            clickedCell.classList.add(currentPlayer.toLowerCase());
-            
-            checkResult();
-        }
-        
-        function checkResult() {
-            let roundWon = false;
-            
-            for (let i = 0; i < winningConditions.length; i++) {
-                const [a, b, c] = winningConditions[i];
-                if (gameState[a] === '' || gameState[b] === '' || gameState[c] === '') {
-                    continue;
-                }
-                if (gameState[a] === gameState[b] && gameState[b] === gameState[c]) {
-                    roundWon = true;
-                    break;
-                }
-            }
-            
-            if (roundWon) {
-                gameStatus.textContent = `Người chơi ${currentPlayer} thắng!`;
-                gameActive = false;
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
                 
-                if (currentPlayer === 'X') {
-                    scoreX++;
-                    scoreXElement.textContent = scoreX;
-                } else {
-                    scoreO++;
-                    scoreOElement.textContent = scoreO;
-                }
-                
-                return;
-            }
-            
-            const roundDraw = !gameState.includes('');
-            if (roundDraw) {
-                gameStatus.textContent = 'Hòa!';
-                gameActive = false;
-                return;
-            }
-            
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            gameStatus.textContent = `Lượt của ${currentPlayer}`;
-        }
-        
-        function resetGame() {
-            currentPlayer = 'X';
-            gameState = ['', '', '', '', '', '', '', '', ''];
-            gameActive = true;
-            gameStatus.textContent = `Lượt của ${currentPlayer}`;
-            
-            document.querySelectorAll('.game-cell').forEach(cell => {
-                cell.textContent = '';
-                cell.classList.remove('x', 'o');
+                question.addEventListener('click', () => {
+                    // Close all other FAQ items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.faq-answer').classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current item
+                    item.classList.toggle('active');
+                    answer.classList.toggle('active');
+                });
             });
-        }
-        
-        function provideHint() {
-            if (!gameActive) return;
-            
-            // Find empty cells
-            const emptyCells = gameState
-                .map((cell, index) => cell === '' ? index : null)
-                .filter(cell => cell !== null);
-            
-            if (emptyCells.length === 0) return;
-            
-            // Select a random empty cell
-            const randomIndex = Math.floor(Math.random() * emptyCells.length);
-            const hintCell = emptyCells[randomIndex];
-            
-            // Highlight the hint cell
-            const cellElement = document.querySelector(`[data-cell-index="${hintCell}"]`);
-            cellElement.style.boxShadow = '0 0 10px var(--accent-color)';
-            
-            setTimeout(() => {
-                cellElement.style.boxShadow = '';
-            }, 1000);
         }
         
         // Email form submission
@@ -958,14 +923,7 @@
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', () => {
             updateCountdown();
-            
-            // Game event listeners
-            document.querySelectorAll('.game-cell').forEach(cell => {
-                cell.addEventListener('click', handleCellClick);
-            });
-            
-            document.getElementById('reset-game').addEventListener('click', resetGame);
-            document.getElementById('hint-btn').addEventListener('click', provideHint);
+            setupFAQ();
             
             // Email form event listener
             document.getElementById('email-form').addEventListener('submit', handleEmailSubmit);
