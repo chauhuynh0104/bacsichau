@@ -2156,15 +2156,26 @@ function displayMachineErrors() {
 function displayMachineConflicts() {
     const machineConflictLogDiv = document.getElementById('machineConflictLog');
     const machineConflictSection = document.getElementById('machineConflictSection');
-    
-    if (machineConflictLog.length === 0) {
+
+    // ❌ LỌC BỎ SẮC THUỐC THANG
+    const filteredConflicts = machineConflictLog
+        .map(conflict => {
+            const filteredProcedures = conflict.conflictProcedures.filter(
+                proc => proc.procedure !== 'Sắc thuốc thang'
+            );
+            return { ...conflict, conflictProcedures: filteredProcedures };
+        })
+        .filter(conflict => conflict.conflictProcedures.length > 0);
+
+    if (filteredConflicts.length === 0) {
         machineConflictLogDiv.innerHTML = '<p>Không có xung đột máy nào được ghi nhận</p>';
         machineConflictSection.style.display = 'none';
         return;
     }
-       const showDoctor = document.getElementById('showDoctorCheckbox').checked;
+
+    const showDoctor = document.getElementById('showDoctorCheckbox').checked;
     const doctorColumnStyle = showDoctor ? '' : 'display:none';
-  
+
     let html = `
     <table class="error-table">
         <thead>
@@ -2173,56 +2184,48 @@ function displayMachineConflicts() {
                 <th><i class="fas fa-user fa-spin-continuous"></i> Tên BN</th>
                 <th><i class="fas fa-procedures fa-spin-continuous"></i> Thủ thuật</th>
                 <th><i class="far fa-clock fa-spin-continuous"></i> Thời gian</th>
-				<th class="doctor-column" style="${doctorColumnStyle}"><i class="fas fa-user-md fa-spin-continuous"></i> Bác sỹ chỉ định</th>
+                <th class="doctor-column" style="${doctorColumnStyle}">
+                    <i class="fas fa-user-md fa-spin-continuous"></i> Bác sỹ chỉ định
+                </th>
                 <th><i class="fas fa-user-nurse fa-spin-continuous"></i> Người thực hiện</th>
-				<th><i class="far fa-clock fa-spin-continuous"></i> Gợi ý giờ</th>
+                <th><i class="far fa-clock fa-spin-continuous"></i> Gợi ý giờ</th>
             </tr>
         </thead>
         <tbody>`;
-    
-    machineConflictLog.forEach(conflict => {
-        
-		//Thêm dòng thông tin về máy và ngày xung đột chưa lọc
-       // html += `
-     // <tr class="error-row" style="background-color: #fff3cd;">
-      //     <td colspan="5" style="text-align: center; font-weight: bold; color: #856404;">
-       //       <i class="fas fa-exclamation-triangle"></i> 
-       //      XUNG ĐỘT MÁY: ${conflict.machineCode} - NGÀY: ${conflict.date}
-     //       </td>
-     ///   </tr>`;
-       
+
+    filteredConflicts.forEach(conflict => {
         conflict.conflictProcedures.forEach((proc, index) => {
             html += `
             <tr class="error-row">
                 ${index === 0 ? `<td rowspan="${conflict.conflictProcedures.length}">${conflict.machineCode}</td>` : ''}
                 <td>${proc.patientName} [<font color="red">${proc.patientAge}</font>]<br/>${proc.patientId}</td>
                 <td>${proc.procedure}</td>
-				 <td><center>${conflict.date} <br/>${proc.displayStart} → ${proc.displayEnd}</center></td>
-				 <td class="doctor-column" style="${doctorColumnStyle}">${proc.doctor || 'Không có'}</td>
+                <td><center>${conflict.date}<br/>${proc.displayStart} → ${proc.displayEnd}</center></td>
+                <td class="doctor-column" style="${doctorColumnStyle}">${proc.doctor || 'Không có'}</td>
                 <td>${proc.operator.replace(/,/g, '')}</td>
-           ${index === 0 ? `<td rowspan="${conflict.conflictProcedures.length}" class="time-suggestion" id="machineSuggestion-${conflict.machineCode}-${conflict.date}">
-          
-            </td>` : ''}
+                ${index === 0 ? `
+                <td rowspan="${conflict.conflictProcedures.length}"
+                    class="time-suggestion"
+                    id="machineSuggestion-${conflict.machineCode}-${conflict.date}">
+                </td>` : ''}
             </tr>`;
         });
-        html += `<tr><td colspan="${showDoctor ? '7' : '6'}" class="group-separator"></td></tr>`;
-        // Thêm dòng phân cách giữa các nhóm xung đột
-        html += `<tr><td colspan="5" class="group-separator"></td></tr>`;
+
+        html += `<tr><td colspan="${showDoctor ? 7 : 6}" class="group-separator"></td></tr>`;
     });
-    
+
     html += `</tbody></table>`;
-    
+
     machineConflictLogDiv.innerHTML = html;
     machineConflictSection.style.display = 'block';
-    
-    // Cập nhật dropdown lọc
+
     updateMachineConflictOperatorFilter();
-	
-	  setTimeout(() => {
+
+    setTimeout(() => {
         generateMachineTimeSuggestions();
     }, 100);
-	
 }
+
 
 // Cập nhật dropdown lọc cho lỗi máy
 function updateMachineOperatorFilter() {
