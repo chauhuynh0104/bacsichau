@@ -1,3 +1,4 @@
+
 <!-- 
 ////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
@@ -838,6 +839,23 @@ document.getElementById('fileInput').addEventListener('change', function () {
   <div id="dateMismatchLog"></div>
 </div>
 <br/>
+
+<!-- BẢNG BÁC SỸ CHỈ ĐỊNH KHÁC THỦ THUẬT CHÍNH -->
+<div id="doctorProcedureMismatchSection" style="display:none;">
+  <br/>
+  <h3>Bác Sĩ Chỉ Định Khác Thủ Thuật Chính</h3>
+<div id="doctorProcedureMismatchFilter" style="margin-top: 15px; display: none;">
+  <label for="doctorProcedureMismatchDoctorSelect">Lọc theo bác sỹ chỉ định:</label>
+  <select class="login-input" id="doctorProcedureMismatchDoctorSelect">
+    <option value="all">Tất cả</option>
+  </select>
+</div>
+
+  <div id="doctorProcedureMismatchLog"></div>
+</div>
+<br/>
+
+
 </div>
 </div>
 <script>
@@ -882,6 +900,8 @@ async function loadProcedures() {
 		let missingMachineLog = [];
 		let dateMismatchLog = [];
         // === KẾT THÚC CODE MỚI ===
+		/// biến kiểm tra thủ thuật chỉ bác sĩ mới được thực hiện///
+		let doctorProcedureMismatchLog = [];
 
 const DROPBOX_CONFIG = {
     refreshToken: "ctgBvj3IstcAAAAAAAAAAVFCsIXIuz_CTQpImakcC4cuQV8DumkfgDWIs8VGPvFT",
@@ -1582,6 +1602,11 @@ if (
 		checkMissingMachineCodes(procedures, data); 
 		checkDateMismatch(procedures, data);
         // === KẾT THÚC THÊM ===
+		///thu thuat bac si moi duoc thuc hien/////
+checkDoctorProcedureMismatch(procedures);
+displayDoctorProcedureMismatchErrors();
+
+////////////
                 displayResults(procedures, skippedRows);
                 window.allHerbProcedures = herbProcedures;
 				// --- Cập nhật số ca khác đa số trên nút ---
@@ -2092,6 +2117,41 @@ function checkDateMismatch(procedures, jsonData) {
         }
     });
 }
+
+/// Hàm kiểm tra thủ thuật bác sĩ mới được thực hiện/////
+
+function checkDoctorProcedureMismatch(procedures) {
+    doctorProcedureMismatchLog = [];
+
+    const TARGET_PROCEDURES = [
+        "Điện châm [kim ngắn]",
+        "Giác hơi",
+        "Thủy châm"
+    ];
+
+    procedures.forEach(p => {
+        if (!TARGET_PROCEDURES.includes(p.procedure)) return;
+
+        const doctor = (p.doctor || "")
+            .toString()
+            .trim()
+            .replace(/,+$/g, "") // bỏ dấu phẩy cuối
+            .toLowerCase();
+
+        const operator = (p.operator || "")
+            .toString()
+            .trim()
+            .replace(/,+$/g, "")
+            .toLowerCase();
+
+        if (!doctor || !operator) return;
+
+        if (doctor !== operator) {
+            doctorProcedureMismatchLog.push(p);
+        }
+    });
+}
+
 
 
 
@@ -2778,6 +2838,96 @@ function displayFilteredDateMismatchErrors(filteredErrors) {
     
     dateMismatchLogDiv.innerHTML = html;
 }
+
+/// ham kiem tra thu thuat bac si moi duoc thuc hien/////
+
+function formatDateTimeLikeMismatch(p) {
+    return `
+        <center>${p.date}<br/>
+        ${p.displayStart} → ${p.displayEnd}
+   </center> `;
+}
+
+function displayDoctorProcedureMismatchErrors() {
+    const section = document.getElementById('doctorProcedureMismatchSection');
+    const logDiv  = document.getElementById('doctorProcedureMismatchLog');
+    const filterDiv = document.getElementById('doctorProcedureMismatchFilter');
+    const doctorSelect = document.getElementById('doctorProcedureMismatchDoctorSelect');
+
+    logDiv.innerHTML = '';
+    doctorSelect.innerHTML = '<option value="all">Tất cả</option>';
+
+    if (doctorProcedureMismatchLog.length === 0) {
+        section.style.display = 'none';
+        filterDiv.style.display = 'none';
+        return;
+    }
+
+    // ====== ĐỔ DROPDOWN BÁC SỸ ======
+    const doctorSet = new Set();
+    doctorProcedureMismatchLog.forEach(p => {
+        if (p.doctor) doctorSet.add(p.doctor);
+    });
+
+    [...doctorSet].sort().forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        doctorSelect.appendChild(opt);
+    });
+
+    filterDiv.style.display = 'block';
+
+    // ====== TẠO TABLE ======
+    const table = document.createElement('table');
+    table.className = 'error-table';
+
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>Tên BN</th>
+                <th>Thủ thuật</th>
+                <th>Ngày</th>
+                <th>Bác sĩ chỉ định</th>
+                <th>Người thực hiện</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    `;
+
+    const tbody = table.querySelector('tbody');
+
+    function renderRows(filterDoctor = 'all') {
+        tbody.innerHTML = '';
+
+        doctorProcedureMismatchLog.forEach(p => {
+            if (filterDoctor !== 'all' && p.doctor !== filterDoctor) return;
+
+            const tr = document.createElement('tr');
+            tr.className = 'error-row';
+
+            tr.innerHTML = `
+                <td>${p.patientName || 'Không có'} [<font color="red">${p.patientAge}</font>]<br/>${p.patientId}</td>
+                <td>${p.procedure}</td>
+                <td>${formatDateTimeLikeMismatch(p)}</td>
+                <td>${p.doctor}</td>
+                <td>${p.operator.replace(/,/g, '')}</td>
+            `;
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    renderRows();
+
+    doctorSelect.onchange = () => {
+        renderRows(doctorSelect.value);
+    };
+
+    logDiv.appendChild(table);
+    section.style.display = 'block';
+}
+
 
 
 
