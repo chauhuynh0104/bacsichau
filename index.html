@@ -839,7 +839,21 @@ document.getElementById('fileInput').addEventListener('change', function () {
   <div id="dateMismatchLog"></div>
 </div>
 <br/>
+<!-- BẢNG BÁC SĨ CHỈ ĐỊNH KHÔNG HỢP LỆ -->
+<div id="invalidDoctorSection" style="display:none;">
+  <br/>
+  <h3>Thủ Thuật Danh Cho Bác Sĩ</h3>
 
+  <div id="invalidDoctorFilter" style="margin-top: 15px; display: none;">
+    <label for="invalidDoctorSelect">Lọc theo bác sĩ chỉ định:</label>
+    <select class="login-input" id="invalidDoctorSelect">
+      <option value="all">Tất cả</option>
+    </select>
+  </div>
+
+  <div id="invalidDoctorLog"></div>
+</div>
+<br/>
 <!-- BẢNG BÁC SỸ CHỈ ĐỊNH KHÁC THỦ THUẬT CHÍNH -->
 <div id="doctorProcedureMismatchSection" style="display:none;">
   <br/>
@@ -900,9 +914,13 @@ async function loadProcedures() {
 		let missingMachineLog = [];
 		let dateMismatchLog = [];
         // === KẾT THÚC CODE MỚI ===
-		/// biến kiểm tra thủ thuật chỉ bác sĩ mới được thực hiện///
+		/// biến kiểm tra thủ thuật người chỉ định khác người thực hiện///
 		let doctorProcedureMismatchLog = [];
+		///// Thủ thuật cao cấp bác sĩ////
+		let invalidDoctorLog = [];
+		let validDoctorList = [];
 
+		
 const DROPBOX_CONFIG = {
     refreshToken: "ctgBvj3IstcAAAAAAAAAAVFCsIXIuz_CTQpImakcC4cuQV8DumkfgDWIs8VGPvFT",
     clientId: "w8awj2qxo3aiv5e",
@@ -1002,7 +1020,8 @@ async function appendDropboxLog(logItem) {
 async function initAfterLogin() {
   await Promise.all([
     loadProcedures(),
-    loadConflictRules()
+    loadConflictRules(),
+	loadValidDoctors()
   ]);
 }
 
@@ -1108,6 +1127,20 @@ const progressTimer = setInterval(() => {
             document.getElementById('loginError').style.display = 'none';
             document.body.classList.add('login-page');
         }
+		
+		
+////////////hàm danh sách bác sĩ/////
+	async function loadValidDoctors() {
+    const url = 'https://raw.githubusercontent.com/chauhuynh0104/chauhuynh0104.txt/refs/heads/main/bsbvyhct.txt';
+    const res = await fetch(url);
+    const text = await res.text();
+    validDoctorList = text
+        .split('\n')
+        .map(x => x.trim().toLowerCase())
+        .filter(Boolean);
+}
+
+
 // Hàm kiểm tra bác sĩ trong danh sách cấm
 async function loadBannedDoctors() {
     const url = 'https://raw.githubusercontent.com/chauhuynh0104/chauhuynh0104.txt/refs/heads/main/listban.txt';
@@ -1562,6 +1595,32 @@ if (
                         if (procedureName === 'Sắc thuốc thang') {
                             herbProcedures.push(procedures[procedures.length - 1]);
                         }
+						const ALLOWED_PROCEDURES = [
+  'thuỷ châm',
+  'điện châm [kim ngắn]',
+  'điều trị bằng tia hồng ngoại',
+  'giác hơi',
+  'hào châm'
+];
+
+const mainDoctor = (row[operatorIndex] || '').toString().trim();
+const doctorLower = mainDoctor.toLowerCase();
+
+if (
+    ALLOWED_PROCEDURES.includes(procedureName.toLowerCase()) &&
+    mainDoctor &&
+    !validDoctorList.some(d => doctorLower.includes(d))
+) {
+    invalidDoctorLog.push({
+        patient: nameIndex !== -1 ? row[nameIndex] || 'Không có' : 'Không có',
+        procedure: procedureName,
+        date: row[dateIndex] || 'Không có',
+        time: `${start.displayTime} - ${end.displayTime}`,
+        doctor: mainDoctor,
+		 prescribingDoctor: row[doctorIndex] || 'Không có' // ✅ Bác sỹ chỉ định
+    });
+}
+
                         procedures.push({
                             rowIndex: rowNumber,
                             patientName: nameIndex !== -1 ? row[nameIndex] || 'Không có' : 'Không có',
@@ -1602,10 +1661,11 @@ if (
 		checkMissingMachineCodes(procedures, data); 
 		checkDateMismatch(procedures, data);
         // === KẾT THÚC THÊM ===
-		///thu thuat bac si moi duoc thuc hien/////
+		///thu thuat bac sĩ chỉ địh khác người thực hiện////
 checkDoctorProcedureMismatch(procedures);
 displayDoctorProcedureMismatchErrors();
-
+////Thủ thuật cao cấp bác sĩ thực hiện/////
+displayInvalidDoctorErrors();
 ////////////
                 displayResults(procedures, skippedRows);
                 window.allHerbProcedures = herbProcedures;
@@ -2118,7 +2178,71 @@ function checkDateMismatch(procedures, jsonData) {
     });
 }
 
-/// Hàm kiểm tra thủ thuật bác sĩ mới được thực hiện/////
+
+ ////hàm kiểm tra thủ thuật cao cấp bác sĩ thực hiện///////////
+ function displayInvalidDoctorErrors() {
+    const section = document.getElementById('invalidDoctorSection');
+    const logDiv = document.getElementById('invalidDoctorLog');
+    const filterDiv = document.getElementById('invalidDoctorFilter');
+    const select = document.getElementById('invalidDoctorSelect');
+
+    if (!section || !logDiv) return;
+
+    if (invalidDoctorLog.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+    filterDiv.style.display = 'block';
+
+    // build filter
+    select.innerHTML = '<option value="all">Tất cả</option>';
+    [...new Set(invalidDoctorLog.map(x => x.doctor))].forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        select.appendChild(opt);
+    });
+
+    function render(filterDoctor = 'all') {
+        logDiv.innerHTML = `
+            <table class="error-table">
+                <thead>
+                    <tr>
+                        <th>Tên BN</th>
+                        <th>Thủ thuật</th>
+                        <th>Ngày</th>
+                        <th>Bác sĩ chỉ định</th>
+                        <th>Thủ thuật chính</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${invalidDoctorLog
+                        .filter(x => filterDoctor === 'all' || x.doctor === filterDoctor)
+                        .map(x => `
+                            <tr class="error-row">
+                                <td>${x.patient}</td>
+                                <td>${x.procedure}</td>
+                                <td><center>${x.date}<br/>
+                             ${x.time}</center></td>
+								 <td>${x.prescribingDoctor}</td>
+                                <td>${x.doctor.replace(/,/g, '')}</td>
+                            </tr>
+                        `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    select.onchange = () => render(select.value);
+    render();
+}
+
+/////end///////////
+
+
+/// Hàm kiểm tra thủ thuật bác sĩ chỉ định khác người thực hiện/////
 
 function checkDoctorProcedureMismatch(procedures) {
     doctorProcedureMismatchLog = [];
