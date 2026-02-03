@@ -2201,7 +2201,7 @@ function checkDateMismatch(procedures, jsonData) {
 
     // build filter
     select.innerHTML = '<option value="all">Tất cả</option>';
-    [...new Set(invalidDoctorLog.map(x => x.doctor))].forEach(d => {
+    [...new Set(invalidDoctorLog.map(x => x.prescribingDoctor))].forEach(d => {
         const opt = document.createElement('option');
         opt.value = d;
         opt.textContent = d;
@@ -2222,7 +2222,7 @@ function checkDateMismatch(procedures, jsonData) {
                 </thead>
                 <tbody>
                     ${invalidDoctorLog
-                        .filter(x => filterDoctor === 'all' || x.doctor === filterDoctor)
+                        .filter(x => filterDoctor === 'all' || x.prescribingDoctor === filterDoctor)
                         .map(x => `
                             <tr class="error-row">
                                 <td>${x.patient}[<font color="red">${x.patientAge}</font>]<br/>${x.patientId}</td>
