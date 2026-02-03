@@ -1615,9 +1615,12 @@ if (
         patient: nameIndex !== -1 ? row[nameIndex] || 'Không có' : 'Không có',
         procedure: procedureName,
         date: row[dateIndex] || 'Không có',
-        time: `${start.displayTime} - ${end.displayTime}`,
+        time: `${start.displayTime} → ${end.displayTime}`,
         doctor: mainDoctor,
+		patientAge: row[patientageIndex] || 'Không có',
+		patientId: row[patientIdIndex] || 'Không có',
 		 prescribingDoctor: row[doctorIndex] || 'Không có' // ✅ Bác sỹ chỉ định
+		 
     });
 }
 
@@ -2222,7 +2225,7 @@ function checkDateMismatch(procedures, jsonData) {
                         .filter(x => filterDoctor === 'all' || x.doctor === filterDoctor)
                         .map(x => `
                             <tr class="error-row">
-                                <td>${x.patient}</td>
+                                <td>${x.patient}[<font color="red">${x.patientAge}</font>]<br/>${x.patientId}</td>
                                 <td>${x.procedure}</td>
                                 <td><center>${x.date}<br/>
                              ${x.time}</center></td>
