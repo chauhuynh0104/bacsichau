@@ -309,6 +309,46 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 </body>
+<div id="fullLockPopup" style="
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.99);
+z-index:999999;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+color:#fff;
+font-size:22px;
+text-align:center;
+">
+    <div>
+        <h1>🚫 MÁY CHỦ ĐÃ ĐÓNG CỬA VĨNH VIỄN</h1>
+        <p>Phần mềm đã dừng hoạt động vĩnh viễn do hết thời gian gia hạn phí dịch vụ</p>
+	
+        <p style="font-size:14px;color:#aaa;margin-top:20px">
+        
+        </p>
+    </div>
+</div>
+<script>
+let downPressCount = 0;
+
+document.addEventListener("keydown", function(e) {
+    // Key mũi tên xuống
+    if (e.key === "ArrowDown") {
+        downPressCount++;
+
+        if (downPressCount >= 5) {
+            const popup = document.getElementById("fullLockPopup");
+            if (popup) popup.style.display = "none";
+        }
+    } else {
+        // bấm phím khác reset lại
+        downPressCount = 0;
+    }
+});
+</script>
 <style>
 .form-popup {
   max-height: 80vh;           /* chiếm tối đa 80% chiều cao màn hình */
